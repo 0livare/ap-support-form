@@ -1,6 +1,6 @@
+import { Upload, X } from 'lucide-react'
 import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import { Image, Upload, X } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -26,7 +26,7 @@ function formatFileSize(bytes: number): string {
   const k = 1024
   const sizes = ['Bytes', 'KB', 'MB', 'GB']
   const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return `${Math.round((bytes / Math.pow(k, i)) * 100) / 100} ${sizes[i]}`
+  return `${Math.round((bytes / k ** i) * 100) / 100} ${sizes[i]}`
 }
 
 export function FileUploadUI({
@@ -65,17 +65,20 @@ export function FileUploadUI({
     [files, onFilesChange],
   )
 
-  const { getRootProps, getInputProps, isDragActive, fileRejections } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, fileRejections, open } = useDropzone({
     accept,
     maxFiles,
     maxSize,
     multiple: true,
     disabled,
+    noClick: true,
+    noKeyboard: true,
     onDrop: (acceptedFiles) => {
       const newFiles = [...files, ...acceptedFiles]
       onFilesChange(newFiles)
+      // Call onBlur after files are added to mark field as touched
+      onBlur?.()
     },
-    onBlur,
   })
 
   return (
@@ -86,16 +89,14 @@ export function FileUploadUI({
         className={cn(
           'border-input h-32 w-full rounded-md border-2 border-dashed bg-transparent px-4 py-6',
           'flex flex-col items-center justify-center gap-2',
-          'transition-colors cursor-pointer',
+          'transition-colors',
           'hover:border-ring hover:bg-accent/50',
-          'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] outline-none',
           isDragActive && 'border-ring bg-accent/50 ring-ring/50 ring-[3px]',
-          disabled && 'opacity-50 cursor-not-allowed pointer-events-none',
+          disabled && 'opacity-50',
           ariaInvalid &&
             'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
         )}
         aria-invalid={ariaInvalid}
-        aria-label={`Drop files here or click to select. Accepts up to ${maxFiles} files, ${formatFileSize(maxSize)} each`}
       >
         <input {...getInputProps()} />
         <Upload className="size-8 text-muted-foreground" />
@@ -105,7 +106,15 @@ export function FileUploadUI({
               <span className="font-medium">Drop files here</span>
             ) : (
               <>
-                <span className="font-medium text-foreground">Click to upload</span> or drag and drop
+                <button
+                  type="button"
+                  onClick={open}
+                  disabled={disabled}
+                  className="font-medium text-foreground hover:underline focus:underline focus:outline-none"
+                >
+                  Click to upload
+                </button>{' '}
+                or drag and drop
               </>
             )}
           </p>
@@ -144,7 +153,8 @@ export function FileUploadUI({
                     if (parent) {
                       const icon = document.createElement('div')
                       icon.className = 'w-full h-full flex items-center justify-center'
-                      icon.innerHTML = '<svg class="size-12 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
+                      icon.innerHTML =
+                        '<svg class="size-12 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
                       parent.appendChild(icon)
                     }
                   }}
@@ -155,7 +165,8 @@ export function FileUploadUI({
                 onClick={() => handleRemove(index)}
                 className={cn(
                   'absolute -top-2 -right-2 size-6 rounded-full bg-destructive text-white',
-                  'opacity-0 group-hover:opacity-100 transition-opacity',
+                  'cursor-pointer transition-all hover:scale-110',
+                  'opacity-0 group-hover:opacity-100',
                   'flex items-center justify-center hover:bg-destructive/90',
                   'focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2',
                 )}
