@@ -335,6 +335,83 @@ Once we've created the derived store we can use it in the `App` component just l
 
 You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
 
+# Slack Integration Setup
+
+This application sends support form submissions to Slack with file uploads. Follow these steps to configure the integration:
+
+## 1. Create a Slack App
+
+1. Go to https://api.slack.com/apps
+2. Click "Create New App" → "From scratch"
+3. Name it "Support Form Bot" (or your preferred name)
+4. Select your workspace
+
+## 2. Configure OAuth & Permissions
+
+1. In the app settings, go to "OAuth & Permissions"
+2. Scroll to "Scopes" → "Bot Token Scopes"
+3. Add these scopes:
+   - `chat:write` - Post messages to channels
+   - `files:write` - Upload files
+   - `channels:read` - Read channel info (for validation)
+4. Scroll up and click "Install to Workspace"
+5. Authorize the app
+6. **Copy the "Bot User OAuth Token"** (starts with `xoxb-`)
+
+## 3. Add Bot to Your Channel
+
+1. Open the Slack channel where you want form submissions to appear
+2. Type `/invite @Support Form Bot` (use your bot's name)
+3. Click on the channel name to view details
+4. Scroll down to find and **copy the Channel ID** (e.g., `C01234567`)
+
+## 4. Configure Environment Variables
+
+### For Local Development
+
+Update `.env.local` or `.dev.vars` with your credentials:
+
+```bash
+SLACK_BOT_TOKEN="xoxb-your-actual-token-here"
+SLACK_CHANNEL_ID="C01234567"
+SLACK_WORKSPACE_ID="skyslope"  # Your workspace subdomain
+```
+
+### For Production (Cloudflare Workers)
+
+Set secrets using Wrangler CLI:
+
+```bash
+wrangler secret put SLACK_BOT_TOKEN
+# Paste your token when prompted
+
+wrangler secret put SLACK_CHANNEL_ID
+# Paste your channel ID when prompted
+
+wrangler secret put SLACK_WORKSPACE_ID
+# Paste your workspace ID when prompted
+```
+
+## 5. Test the Integration
+
+1. Start the dev server: `pnpm dev`
+2. Fill out and submit the support form
+3. Check your Slack channel for the message
+4. Verify that:
+   - Message appears with correct formatting
+   - Screenshots are attached
+   - Permalink in success page works
+
+## Slack Message Format
+
+Messages include:
+- **Header:** Emoji indicator + app name
+- **Fields:** Urgency level, user email, subscriber ID (for BMUI)
+- **Description:** Full issue description
+- **URLs:** Clickable links to video, forms files, digisign envelopes
+- **Files:** Screenshot attachments
+- **Color coding:** Based on urgency (green/blue/orange/red)
+
 # Demo files
 
 Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.

@@ -1,9 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import React from 'react'
 import { z } from 'zod'
 import { Spacer } from '@/components'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAppForm } from '@/hooks/form/use-app-form'
 import { authClient } from '@/lib/auth-client'
+import { sendSlackMessage } from '@/lib/slack'
 
 export const Route = createFileRoute('/_authed/form')({
   component: SimpleForm,
@@ -60,6 +62,11 @@ type FormValues = z.infer<typeof schema>
 
 function SimpleForm() {
   const { data: session } = authClient.useSession()
+  const navigate = useNavigate()
+
+  const [submitting, setSubmitting] = React.useState(false)
+  const [submitError, setSubmitError] = React.useState<string | null>(null)
+
   const form = useAppForm({
     // @ts-expect-error
     defaultValues: {
@@ -78,10 +85,27 @@ function SimpleForm() {
     validators: {
       onBlur: schema,
     },
-    onSubmit: ({ value }) => {
-      console.log(value)
-      // Show success message
-      alert('Form submitted successfully!')
+    async onSubmit({ value }) {
+      setSubmitting(true)
+      setSubmitError(null)
+
+      try {
+        const result = await sendSlackMessage(value)
+
+        if (result.success && result.permalink) {
+          // Redirect to success page with permalink
+          navigate({
+            to: '/success',
+            search: { permalink: result.permalink },
+          })
+        }
+      } catch (error) {
+        console.error('Failed to submit form:', error)
+        setSubmitError(
+          error instanceof Error ? error.message : 'Failed to submit form. Please try again.',
+        )
+        setSubmitting(false)
+      }
     },
   })
 
@@ -295,9 +319,20 @@ function SimpleForm() {
               }
             </form.Subscribe>
 
+            {submitError && (
+              <div className="rounded-md bg-red-50 p-4 border border-red-200">
+                <p className="text-sm text-red-800">
+                  <strong>Error:</strong> {submitError}
+                </p>
+              </div>
+            )}
+
             <div className="flex justify-end">
               <form.AppForm>
-                <form.SubmitButton label="Submit" />
+                <form.SubmitButton
+                  label={submitting ? 'Submitting...' : 'Submit'}
+                  disabled={submitting}
+                />
               </form.AppForm>
             </div>
           </form>

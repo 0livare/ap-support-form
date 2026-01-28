@@ -6,7 +6,9 @@
   "main": "@tanstack/react-start/server-entry",
   "vars": {
     "GOOGLE_CLIENT_ID": "1088536622653-gc8uh0q1n1u2jldrvt3aabdop3hq4h1a.apps.googleusercontent.com",
-    "VITE_BETTER_AUTH_URL": "https://ap-support-form.olivare.workers.dev"
+    "VITE_BETTER_AUTH_URL": "https://ap-support-form.olivare.workers.dev",
+    "SLACK_CHANNEL_ID": "",
+    "SLACK_WORKSPACE_ID": "skyslope"
   },
   // Note: GOOGLE_CLIENT_SECRET should be set as a secret:
   // - Local: Add to .dev.vars file

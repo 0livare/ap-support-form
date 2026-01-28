@@ -13,6 +13,7 @@ import { Route as LogoutRouteImport } from './routes/logout'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
 import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
+import { Route as AuthedSuccessRouteImport } from './routes/_authed/success'
 import { Route as AuthedFormRouteImport } from './routes/_authed/form'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as AuthedDemoTanstackQueryRouteImport } from './routes/_authed/demo/tanstack-query'
@@ -43,6 +44,11 @@ const AuthedRouteRoute = AuthedRouteRouteImport.update({
 const AuthedIndexRoute = AuthedIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedSuccessRoute = AuthedSuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
   getParentRoute: () => AuthedRouteRoute,
 } as any)
 const AuthedFormRoute = AuthedFormRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/form': typeof AuthedFormRoute
+  '/success': typeof AuthedSuccessRoute
   '/demo/tanstack-query': typeof AuthedDemoTanstackQueryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/demo/api/names': typeof AuthedDemoApiNamesRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/form': typeof AuthedFormRoute
+  '/success': typeof AuthedSuccessRoute
   '/': typeof AuthedIndexRoute
   '/demo/tanstack-query': typeof AuthedDemoTanstackQueryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/logout': typeof LogoutRoute
   '/_authed/form': typeof AuthedFormRoute
+  '/_authed/success': typeof AuthedSuccessRoute
   '/_authed/': typeof AuthedIndexRoute
   '/_authed/demo/tanstack-query': typeof AuthedDemoTanstackQueryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/form'
+    | '/success'
     | '/demo/tanstack-query'
     | '/api/auth/$'
     | '/demo/api/names'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/form'
+    | '/success'
     | '/'
     | '/demo/tanstack-query'
     | '/api/auth/$'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/logout'
     | '/_authed/form'
+    | '/_authed/success'
     | '/_authed/'
     | '/_authed/demo/tanstack-query'
     | '/api/auth/$'
@@ -254,6 +266,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthedIndexRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/success': {
+      id: '/_authed/success'
+      path: '/success'
+      fullPath: '/success'
+      preLoaderRoute: typeof AuthedSuccessRouteImport
       parentRoute: typeof AuthedRouteRoute
     }
     '/_authed/form': {
@@ -345,6 +364,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthedRouteRouteChildren {
   AuthedFormRoute: typeof AuthedFormRoute
+  AuthedSuccessRoute: typeof AuthedSuccessRoute
   AuthedIndexRoute: typeof AuthedIndexRoute
   AuthedDemoTanstackQueryRoute: typeof AuthedDemoTanstackQueryRoute
   AuthedDemoApiNamesRoute: typeof AuthedDemoApiNamesRoute
@@ -360,6 +380,7 @@ interface AuthedRouteRouteChildren {
 
 const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
   AuthedFormRoute: AuthedFormRoute,
+  AuthedSuccessRoute: AuthedSuccessRoute,
   AuthedIndexRoute: AuthedIndexRoute,
   AuthedDemoTanstackQueryRoute: AuthedDemoTanstackQueryRoute,
   AuthedDemoApiNamesRoute: AuthedDemoApiNamesRoute,
