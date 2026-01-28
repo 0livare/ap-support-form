@@ -53,6 +53,7 @@ function BetterAuthDemo() {
           </div>
 
           <button
+            type="button"
             onClick={() => authClient.signOut()}
             className="w-full h-9 px-4 text-sm font-medium border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
           >
@@ -125,6 +126,7 @@ function BetterAuthDemo() {
               <label htmlFor="name" className="text-sm font-medium leading-none">
                 Name
               </label>
+              {/** biome-ignore lint/correctness/useUniqueElementIds: demo components */}
               <input
                 id="name"
                 type="text"
@@ -140,6 +142,7 @@ function BetterAuthDemo() {
             <label htmlFor="email" className="text-sm font-medium leading-none">
               Email
             </label>
+            {/** biome-ignore lint/correctness/useUniqueElementIds: demo components */}
             <input
               id="email"
               type="email"
@@ -154,6 +157,7 @@ function BetterAuthDemo() {
             <label htmlFor="password" className="text-sm font-medium leading-none">
               Password
             </label>
+            {/** biome-ignore lint/correctness/useUniqueElementIds: demo components */}
             <input
               id="password"
               type="password"
