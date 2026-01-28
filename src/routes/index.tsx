@@ -7,24 +7,42 @@ export const Route = createFileRoute('/')({
   component: SimpleForm,
 })
 
-const schema = z.object({
-  app: z.enum(
-    ['forms', 'digisign', 'breeze', 'bmui', 'offers', 'prime', 'books', 'other'] as const,
-    'Please choose an app',
-  ),
-  urgency: z.enum(['info', 'low', 'medium', 'high'], 'Please specify the urgency of this request'),
-  email: z.email(),
-  subId: z.string().optional(),
-  video: z.url(),
-  screenshots: z.array(z.instanceof(File)).max(10, 'Maximum 10 files allowed').optional(),
-  formsFile: z.url().optional(),
-  digiEnvelope: z
-    .url()
-    .regex(/^https:\/\/send\.skyslope\.com\/envelopes\/[a-f0-9-]+/, 'Invalid Digisign envelope URL')
-    .optional(),
-  previousTicketNumbers: z.string().optional(),
-  description: z.string().min(1, 'Description is required'),
-})
+const schema = z
+  .object({
+    app: z.enum(
+      ['forms', 'digisign', 'breeze', 'bmui', 'offers', 'prime', 'books', 'other'] as const,
+      'Please choose an app',
+    ),
+    urgency: z.enum(
+      ['info', 'low', 'medium', 'high'],
+      'Please specify the urgency of this request',
+    ),
+    email: z.email(),
+    subId: z.string().optional(),
+    video: z.url(),
+    screenshots: z.array(z.instanceof(File)).max(10, 'Maximum 10 files allowed').optional(),
+    formsFile: z.url().optional(),
+    digiEnvelope: z
+      .url()
+      .regex(
+        /^https:\/\/send\.skyslope\.com\/envelopes\/[a-f0-9-]+/,
+        'Invalid Digisign envelope URL',
+      )
+      .optional(),
+    previousTicketNumbers: z.string().optional(),
+    description: z.string().min(1, 'Description is required'),
+  })
+  .refine(
+    (data) => {
+      if (data.app === 'bmui') return !!data.subId
+      return true
+    },
+    {
+      error: 'Subscriber ID is required for BMUI issues',
+      path: ['subId'],
+    },
+  )
+
 type FormValues = z.infer<typeof schema>
 
 function SimpleForm() {
@@ -132,7 +150,10 @@ function SimpleForm() {
                     {app === 'bmui' && (
                       <form.AppField name="subId">
                         {(field) => (
-                          <field.TextField label="What is the subscriber ID for this user's brokerage?" />
+                          <field.TextField
+                            label="What is the subscriber ID for this user's brokerage?"
+                            isOptional={false}
+                          />
                         )}
                       </form.AppField>
                     )}

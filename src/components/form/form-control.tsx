@@ -4,7 +4,7 @@ import { Label } from '@/components/ui/label'
 import { useIsFieldOptional } from '@/lib/form-utils'
 import { cn } from '@/lib/utils'
 
-interface FormControlProps extends React.ComponentProps<'div'> {
+export interface FormControlProps extends React.ComponentProps<'div'> {
   label: string
   // biome-ignore format lint/suspicious/noExplicitAny: don't split all these any's onto their own line
   field: FieldApi<any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any>
@@ -13,10 +13,19 @@ interface FormControlProps extends React.ComponentProps<'div'> {
     labelRoot?: string
     labelText?: string
   }
+  isOptional?: boolean
 }
 
 export function FormControl(props: FormControlProps) {
-  const { children, className, field, label, classes, ...rest } = props
+  const {
+    children,
+    className,
+    field,
+    label,
+    classes,
+    isOptional: isOptionalOverride,
+    ...rest
+  } = props
 
   const errors = useStore(field.store, (state) => state.meta.errors)
   const isOptional = useIsFieldOptional(field)
@@ -25,7 +34,7 @@ export function FormControl(props: FormControlProps) {
     <div className={cn(className, classes?.root)} {...rest}>
       <Label
         label={label}
-        isOptional={isOptional}
+        isOptional={isOptionalOverride ?? isOptional}
         classes={{ root: classes?.labelRoot, text: classes?.labelText }}
       >
         {children}
