@@ -16,7 +16,7 @@ const schema = z.object({
   email: z.email(),
   subId: z.string().optional(),
   video: z.url(),
-  screenshots: z.file().optional(),
+  screenshots: z.array(z.instanceof(File)).max(10, 'Maximum 10 files allowed').optional(),
   formsFile: z.url().optional(),
   digiEnvelope: z
     .url()
@@ -35,7 +35,7 @@ function SimpleForm() {
       urgency: '',
       email: '',
       video: '',
-      screenshots: undefined,
+      screenshots: [],
       formsFile: '',
       digiEnvelope: '',
       previousTicketNumbers: '',
@@ -144,11 +144,11 @@ function SimpleForm() {
                         )}
                       </form.AppField>
 
-                      {/* <form.AppField name="screenshots">
-            {(field) => (
-              <field.FileUpload label="Are there any screenshots that would be useful in addition to your video?" />
-            )}
-          </form.AppField> */}
+                      <form.AppField name="screenshots">
+                        {(field) => (
+                          <field.FileUpload label="Are there any screenshots that would be useful in addition to your video?" />
+                        )}
+                      </form.AppField>
 
                       {app === 'forms' && (
                         <form.AppField name="formsFile">

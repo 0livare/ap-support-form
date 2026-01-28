@@ -1,3 +1,4 @@
+export * from './file-upload'
 export * from './select'
 export * from './slider'
 export * from './submit-button'
