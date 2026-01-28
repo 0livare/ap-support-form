@@ -29,7 +29,7 @@ function formatFileSize(bytes: number): string {
   return `${Math.round((bytes / k ** i) * 100) / 100} ${sizes[i]}`
 }
 
-export function FileUploadUI({
+export function FileUploadDropzone({
   files,
   onFilesChange,
   onBlur,
@@ -39,32 +39,6 @@ export function FileUploadUI({
   disabled = false,
   'aria-invalid': ariaInvalid,
 }: FileUploadUIProps) {
-  const [previews, setPreviews] = useState<FilePreview[]>([])
-
-  // Create preview URLs for images
-  useEffect(() => {
-    const newPreviews = files.map((file) => ({
-      url: URL.createObjectURL(file),
-      name: file.name,
-      size: file.size,
-    }))
-    setPreviews(newPreviews)
-
-    // Cleanup function to revoke object URLs
-    return () => {
-      newPreviews.forEach((preview) => URL.revokeObjectURL(preview.url))
-    }
-  }, [files])
-
-  const handleRemove = useCallback(
-    (index: number) => {
-      const newFiles = [...files]
-      newFiles.splice(index, 1)
-      onFilesChange(newFiles)
-    },
-    [files, onFilesChange],
-  )
-
   const { getRootProps, getInputProps, isDragActive, fileRejections, open } = useDropzone({
     accept,
     maxFiles,
@@ -81,10 +55,17 @@ export function FileUploadUI({
     },
   })
 
+  const { ref, onDragEnter, onDragOver, onDragLeave, onDrop } = getRootProps()
+
   return (
-    <div className="w-full">
+    <>
+      {/** biome-ignore lint/a11y/noStaticElementInteractions: There is a button as well for keyboard users */}
       <div
-        {...getRootProps()}
+        ref={ref}
+        onDragEnter={onDragEnter}
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
         data-slot="file-upload"
         className={cn(
           'border-input h-32 w-full rounded-md border-2 border-dashed bg-transparent px-4 py-6',
@@ -108,7 +89,10 @@ export function FileUploadUI({
               <>
                 <button
                   type="button"
-                  onClick={open}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    open()
+                  }}
                   disabled={disabled}
                   className="font-medium text-foreground hover:underline focus:underline focus:outline-none"
                 >
@@ -134,54 +118,101 @@ export function FileUploadUI({
           ))}
         </div>
       )}
+    </>
+  )
+}
 
-      {/* Image previews */}
-      {previews.length > 0 && (
-        <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
-          {previews.map((preview, index) => (
-            <div key={preview.url} className="relative group">
-              <div className="aspect-square rounded-md overflow-hidden border border-input bg-muted">
-                <img
-                  src={preview.url}
-                  alt={preview.name}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // Fallback if image fails to load
-                    const target = e.target as HTMLImageElement
-                    target.style.display = 'none'
-                    const parent = target.parentElement
-                    if (parent) {
-                      const icon = document.createElement('div')
-                      icon.className = 'w-full h-full flex items-center justify-center'
-                      icon.innerHTML =
-                        '<svg class="size-12 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
-                      parent.appendChild(icon)
-                    }
-                  }}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => handleRemove(index)}
-                className={cn(
-                  'absolute -top-2 -right-2 size-6 rounded-full bg-destructive text-white',
-                  'cursor-pointer transition-all hover:scale-110',
-                  'opacity-0 group-hover:opacity-100',
-                  'flex items-center justify-center hover:bg-destructive/90',
-                  'focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2',
-                )}
-                aria-label={`Remove ${preview.name}`}
-              >
-                <X className="size-4" />
-              </button>
-              <p className="mt-1 text-xs text-muted-foreground truncate" title={preview.name}>
-                {preview.name}
-              </p>
-              <p className="text-xs text-muted-foreground">{formatFileSize(preview.size)}</p>
-            </div>
-          ))}
+export function FileUploadPreviews({
+  files,
+  onRemove,
+}: {
+  files: File[]
+  onRemove: (index: number) => void
+}) {
+  const [previews, setPreviews] = useState<FilePreview[]>([])
+
+  // Create preview URLs for images
+  useEffect(() => {
+    const newPreviews = files.map((file) => ({
+      url: URL.createObjectURL(file),
+      name: file.name,
+      size: file.size,
+    }))
+    setPreviews(newPreviews)
+
+    // Cleanup function to revoke object URLs
+    return () => {
+      for (const preview of newPreviews) {
+        URL.revokeObjectURL(preview.url)
+      }
+    }
+  }, [files])
+
+  if (previews.length === 0) return null
+
+  return (
+    <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-4">
+      {previews.map((preview, index) => (
+        <div key={preview.url} className="relative group">
+          <div className="aspect-square rounded-md overflow-hidden border border-input bg-muted">
+            <img
+              src={preview.url}
+              alt={preview.name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback if image fails to load
+                const target = e.target as HTMLImageElement
+                target.style.display = 'none'
+                const parent = target.parentElement
+                if (parent) {
+                  const icon = document.createElement('div')
+                  icon.className = 'w-full h-full flex items-center justify-center'
+                  icon.innerHTML =
+                    '<svg class="size-12 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
+                  parent.appendChild(icon)
+                }
+              }}
+            />
+          </div>
+          <button
+            type="button"
+            onClick={() => onRemove(index)}
+            className={cn(
+              'absolute -top-2 -right-2 size-6 rounded-full bg-destructive text-white',
+              'cursor-pointer transition-all hover:scale-110',
+              'opacity-0 group-hover:opacity-100',
+              'flex items-center justify-center hover:bg-destructive/90',
+              'focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2',
+            )}
+            aria-label={`Remove ${preview.name}`}
+          >
+            <X className="size-4" />
+          </button>
+          <p className="mt-1 text-xs text-muted-foreground truncate" title={preview.name}>
+            {preview.name}
+          </p>
+          <p className="text-xs text-muted-foreground">{formatFileSize(preview.size)}</p>
         </div>
-      )}
+      ))}
+    </div>
+  )
+}
+
+// Legacy component for backward compatibility
+export function FileUploadUI(props: FileUploadUIProps) {
+  const handleRemove = useCallback(
+    (index: number) => {
+      const newFiles = [...props.files]
+      newFiles.splice(index, 1)
+      props.onFilesChange(newFiles)
+    },
+    [props],
+  )
+
+  return (
+    <div className="w-full">
+      <FileUploadDropzone {...props} />
+      <FileUploadPreviews files={props.files} onRemove={handleRemove} />
     </div>
   )
 }
