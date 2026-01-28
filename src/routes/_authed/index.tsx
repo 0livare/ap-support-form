@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { Card, CardContent } from '@/components/ui/card'
 import { useAppForm } from '@/hooks/demo.form'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_authed/')({
   component: SimpleForm,
 })
 

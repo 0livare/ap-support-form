@@ -9,137 +9,148 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
-import { Route as DemoBetterAuthRouteImport } from './routes/demo/better-auth'
-import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
-import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
-import { Route as DemoFormAddressRouteImport } from './routes/demo/form.address'
-import { Route as DemoApiTqTodosRouteImport } from './routes/demo/api.tq-todos'
-import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthedRouteRouteImport } from './routes/_authed/route'
+import { Route as AuthedIndexRouteImport } from './routes/_authed/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
-import { Route as DemoStartSsrIndexRouteImport } from './routes/demo/start.ssr.index'
-import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr.spa-mode'
-import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
-import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
+import { Route as AuthedDemoTanstackQueryRouteImport } from './routes/_authed/demo/tanstack-query'
+import { Route as AuthedDemoStartServerFuncsRouteImport } from './routes/_authed/demo/start.server-funcs'
+import { Route as AuthedDemoStartApiRequestRouteImport } from './routes/_authed/demo/start.api-request'
+import { Route as AuthedDemoFormAddressRouteImport } from './routes/_authed/demo/form.address'
+import { Route as AuthedDemoApiTqTodosRouteImport } from './routes/_authed/demo/api.tq-todos'
+import { Route as AuthedDemoApiNamesRouteImport } from './routes/_authed/demo/api.names'
+import { Route as AuthedDemoStartSsrIndexRouteImport } from './routes/_authed/demo/start.ssr.index'
+import { Route as AuthedDemoStartSsrSpaModeRouteImport } from './routes/_authed/demo/start.ssr.spa-mode'
+import { Route as AuthedDemoStartSsrFullSsrRouteImport } from './routes/_authed/demo/start.ssr.full-ssr'
+import { Route as AuthedDemoStartSsrDataOnlyRouteImport } from './routes/_authed/demo/start.ssr.data-only'
 
-const IndexRoute = IndexRouteImport.update({
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthedRouteRoute = AuthedRouteRouteImport.update({
+  id: '/_authed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthedIndexRoute = AuthedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoTanstackQueryRoute = DemoTanstackQueryRouteImport.update({
-  id: '/demo/tanstack-query',
-  path: '/demo/tanstack-query',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoBetterAuthRoute = DemoBetterAuthRouteImport.update({
-  id: '/demo/better-auth',
-  path: '/demo/better-auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
-  id: '/demo/start/server-funcs',
-  path: '/demo/start/server-funcs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStartApiRequestRoute = DemoStartApiRequestRouteImport.update({
-  id: '/demo/start/api-request',
-  path: '/demo/start/api-request',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
-  id: '/demo/form/address',
-  path: '/demo/form/address',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoApiTqTodosRoute = DemoApiTqTodosRouteImport.update({
-  id: '/demo/api/tq-todos',
-  path: '/demo/api/tq-todos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoApiNamesRoute = DemoApiNamesRouteImport.update({
-  id: '/demo/api/names',
-  path: '/demo/api/names',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRouteRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DemoStartSsrIndexRoute = DemoStartSsrIndexRouteImport.update({
+const AuthedDemoTanstackQueryRoute = AuthedDemoTanstackQueryRouteImport.update({
+  id: '/demo/tanstack-query',
+  path: '/demo/tanstack-query',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedDemoStartServerFuncsRoute =
+  AuthedDemoStartServerFuncsRouteImport.update({
+    id: '/demo/start/server-funcs',
+    path: '/demo/start/server-funcs',
+    getParentRoute: () => AuthedRouteRoute,
+  } as any)
+const AuthedDemoStartApiRequestRoute =
+  AuthedDemoStartApiRequestRouteImport.update({
+    id: '/demo/start/api-request',
+    path: '/demo/start/api-request',
+    getParentRoute: () => AuthedRouteRoute,
+  } as any)
+const AuthedDemoFormAddressRoute = AuthedDemoFormAddressRouteImport.update({
+  id: '/demo/form/address',
+  path: '/demo/form/address',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedDemoApiTqTodosRoute = AuthedDemoApiTqTodosRouteImport.update({
+  id: '/demo/api/tq-todos',
+  path: '/demo/api/tq-todos',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedDemoApiNamesRoute = AuthedDemoApiNamesRouteImport.update({
+  id: '/demo/api/names',
+  path: '/demo/api/names',
+  getParentRoute: () => AuthedRouteRoute,
+} as any)
+const AuthedDemoStartSsrIndexRoute = AuthedDemoStartSsrIndexRouteImport.update({
   id: '/demo/start/ssr/',
   path: '/demo/start/ssr/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthedRouteRoute,
 } as any)
-const DemoStartSsrSpaModeRoute = DemoStartSsrSpaModeRouteImport.update({
-  id: '/demo/start/ssr/spa-mode',
-  path: '/demo/start/ssr/spa-mode',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStartSsrFullSsrRoute = DemoStartSsrFullSsrRouteImport.update({
-  id: '/demo/start/ssr/full-ssr',
-  path: '/demo/start/ssr/full-ssr',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
-  id: '/demo/start/ssr/data-only',
-  path: '/demo/start/ssr/data-only',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AuthedDemoStartSsrSpaModeRoute =
+  AuthedDemoStartSsrSpaModeRouteImport.update({
+    id: '/demo/start/ssr/spa-mode',
+    path: '/demo/start/ssr/spa-mode',
+    getParentRoute: () => AuthedRouteRoute,
+  } as any)
+const AuthedDemoStartSsrFullSsrRoute =
+  AuthedDemoStartSsrFullSsrRouteImport.update({
+    id: '/demo/start/ssr/full-ssr',
+    path: '/demo/start/ssr/full-ssr',
+    getParentRoute: () => AuthedRouteRoute,
+  } as any)
+const AuthedDemoStartSsrDataOnlyRoute =
+  AuthedDemoStartSsrDataOnlyRouteImport.update({
+    id: '/demo/start/ssr/data-only',
+    path: '/demo/start/ssr/data-only',
+    getParentRoute: () => AuthedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/demo/better-auth': typeof DemoBetterAuthRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/': typeof AuthedIndexRoute
+  '/login': typeof LoginRoute
+  '/demo/tanstack-query': typeof AuthedDemoTanstackQueryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/demo/api/names': typeof AuthedDemoApiNamesRoute
+  '/demo/api/tq-todos': typeof AuthedDemoApiTqTodosRoute
+  '/demo/form/address': typeof AuthedDemoFormAddressRoute
+  '/demo/start/api-request': typeof AuthedDemoStartApiRequestRoute
+  '/demo/start/server-funcs': typeof AuthedDemoStartServerFuncsRoute
+  '/demo/start/ssr/data-only': typeof AuthedDemoStartSsrDataOnlyRoute
+  '/demo/start/ssr/full-ssr': typeof AuthedDemoStartSsrFullSsrRoute
+  '/demo/start/ssr/spa-mode': typeof AuthedDemoStartSsrSpaModeRoute
+  '/demo/start/ssr/': typeof AuthedDemoStartSsrIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/demo/better-auth': typeof DemoBetterAuthRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/login': typeof LoginRoute
+  '/': typeof AuthedIndexRoute
+  '/demo/tanstack-query': typeof AuthedDemoTanstackQueryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr': typeof DemoStartSsrIndexRoute
+  '/demo/api/names': typeof AuthedDemoApiNamesRoute
+  '/demo/api/tq-todos': typeof AuthedDemoApiTqTodosRoute
+  '/demo/form/address': typeof AuthedDemoFormAddressRoute
+  '/demo/start/api-request': typeof AuthedDemoStartApiRequestRoute
+  '/demo/start/server-funcs': typeof AuthedDemoStartServerFuncsRoute
+  '/demo/start/ssr/data-only': typeof AuthedDemoStartSsrDataOnlyRoute
+  '/demo/start/ssr/full-ssr': typeof AuthedDemoStartSsrFullSsrRoute
+  '/demo/start/ssr/spa-mode': typeof AuthedDemoStartSsrSpaModeRoute
+  '/demo/start/ssr': typeof AuthedDemoStartSsrIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/demo/better-auth': typeof DemoBetterAuthRoute
-  '/demo/tanstack-query': typeof DemoTanstackQueryRoute
+  '/_authed': typeof AuthedRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_authed/': typeof AuthedIndexRoute
+  '/_authed/demo/tanstack-query': typeof AuthedDemoTanstackQueryRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
-  '/demo/api/names': typeof DemoApiNamesRoute
-  '/demo/api/tq-todos': typeof DemoApiTqTodosRoute
-  '/demo/form/address': typeof DemoFormAddressRoute
-  '/demo/start/api-request': typeof DemoStartApiRequestRoute
-  '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
-  '/demo/start/ssr/data-only': typeof DemoStartSsrDataOnlyRoute
-  '/demo/start/ssr/full-ssr': typeof DemoStartSsrFullSsrRoute
-  '/demo/start/ssr/spa-mode': typeof DemoStartSsrSpaModeRoute
-  '/demo/start/ssr/': typeof DemoStartSsrIndexRoute
+  '/_authed/demo/api/names': typeof AuthedDemoApiNamesRoute
+  '/_authed/demo/api/tq-todos': typeof AuthedDemoApiTqTodosRoute
+  '/_authed/demo/form/address': typeof AuthedDemoFormAddressRoute
+  '/_authed/demo/start/api-request': typeof AuthedDemoStartApiRequestRoute
+  '/_authed/demo/start/server-funcs': typeof AuthedDemoStartServerFuncsRoute
+  '/_authed/demo/start/ssr/data-only': typeof AuthedDemoStartSsrDataOnlyRoute
+  '/_authed/demo/start/ssr/full-ssr': typeof AuthedDemoStartSsrFullSsrRoute
+  '/_authed/demo/start/ssr/spa-mode': typeof AuthedDemoStartSsrSpaModeRoute
+  '/_authed/demo/start/ssr/': typeof AuthedDemoStartSsrIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/demo/better-auth'
+    | '/login'
     | '/demo/tanstack-query'
     | '/api/auth/$'
     | '/demo/api/names'
@@ -153,8 +164,8 @@ export interface FileRouteTypes {
     | '/demo/start/ssr/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/login'
     | '/'
-    | '/demo/better-auth'
     | '/demo/tanstack-query'
     | '/api/auth/$'
     | '/demo/api/names'
@@ -168,94 +179,50 @@ export interface FileRouteTypes {
     | '/demo/start/ssr'
   id:
     | '__root__'
-    | '/'
-    | '/demo/better-auth'
-    | '/demo/tanstack-query'
+    | '/_authed'
+    | '/login'
+    | '/_authed/'
+    | '/_authed/demo/tanstack-query'
     | '/api/auth/$'
-    | '/demo/api/names'
-    | '/demo/api/tq-todos'
-    | '/demo/form/address'
-    | '/demo/start/api-request'
-    | '/demo/start/server-funcs'
-    | '/demo/start/ssr/data-only'
-    | '/demo/start/ssr/full-ssr'
-    | '/demo/start/ssr/spa-mode'
-    | '/demo/start/ssr/'
+    | '/_authed/demo/api/names'
+    | '/_authed/demo/api/tq-todos'
+    | '/_authed/demo/form/address'
+    | '/_authed/demo/start/api-request'
+    | '/_authed/demo/start/server-funcs'
+    | '/_authed/demo/start/ssr/data-only'
+    | '/_authed/demo/start/ssr/full-ssr'
+    | '/_authed/demo/start/ssr/spa-mode'
+    | '/_authed/demo/start/ssr/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  DemoBetterAuthRoute: typeof DemoBetterAuthRoute
-  DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
+  AuthedRouteRoute: typeof AuthedRouteRouteWithChildren
+  LoginRoute: typeof LoginRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
-  DemoApiNamesRoute: typeof DemoApiNamesRoute
-  DemoApiTqTodosRoute: typeof DemoApiTqTodosRoute
-  DemoFormAddressRoute: typeof DemoFormAddressRoute
-  DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
-  DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
-  DemoStartSsrDataOnlyRoute: typeof DemoStartSsrDataOnlyRoute
-  DemoStartSsrFullSsrRoute: typeof DemoStartSsrFullSsrRoute
-  DemoStartSsrSpaModeRoute: typeof DemoStartSsrSpaModeRoute
-  DemoStartSsrIndexRoute: typeof DemoStartSsrIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authed': {
+      id: '/_authed'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authed/': {
+      id: '/_authed/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/tanstack-query': {
-      id: '/demo/tanstack-query'
-      path: '/demo/tanstack-query'
-      fullPath: '/demo/tanstack-query'
-      preLoaderRoute: typeof DemoTanstackQueryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/better-auth': {
-      id: '/demo/better-auth'
-      path: '/demo/better-auth'
-      fullPath: '/demo/better-auth'
-      preLoaderRoute: typeof DemoBetterAuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/start/server-funcs': {
-      id: '/demo/start/server-funcs'
-      path: '/demo/start/server-funcs'
-      fullPath: '/demo/start/server-funcs'
-      preLoaderRoute: typeof DemoStartServerFuncsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/start/api-request': {
-      id: '/demo/start/api-request'
-      path: '/demo/start/api-request'
-      fullPath: '/demo/start/api-request'
-      preLoaderRoute: typeof DemoStartApiRequestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/form/address': {
-      id: '/demo/form/address'
-      path: '/demo/form/address'
-      fullPath: '/demo/form/address'
-      preLoaderRoute: typeof DemoFormAddressRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/api/tq-todos': {
-      id: '/demo/api/tq-todos'
-      path: '/demo/api/tq-todos'
-      fullPath: '/demo/api/tq-todos'
-      preLoaderRoute: typeof DemoApiTqTodosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/api/names': {
-      id: '/demo/api/names'
-      path: '/demo/api/names'
-      fullPath: '/demo/api/names'
-      preLoaderRoute: typeof DemoApiNamesRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedIndexRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
     '/api/auth/$': {
       id: '/api/auth/$'
@@ -264,51 +231,115 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/demo/start/ssr/': {
-      id: '/demo/start/ssr/'
+    '/_authed/demo/tanstack-query': {
+      id: '/_authed/demo/tanstack-query'
+      path: '/demo/tanstack-query'
+      fullPath: '/demo/tanstack-query'
+      preLoaderRoute: typeof AuthedDemoTanstackQueryRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/demo/start/server-funcs': {
+      id: '/_authed/demo/start/server-funcs'
+      path: '/demo/start/server-funcs'
+      fullPath: '/demo/start/server-funcs'
+      preLoaderRoute: typeof AuthedDemoStartServerFuncsRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/demo/start/api-request': {
+      id: '/_authed/demo/start/api-request'
+      path: '/demo/start/api-request'
+      fullPath: '/demo/start/api-request'
+      preLoaderRoute: typeof AuthedDemoStartApiRequestRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/demo/form/address': {
+      id: '/_authed/demo/form/address'
+      path: '/demo/form/address'
+      fullPath: '/demo/form/address'
+      preLoaderRoute: typeof AuthedDemoFormAddressRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/demo/api/tq-todos': {
+      id: '/_authed/demo/api/tq-todos'
+      path: '/demo/api/tq-todos'
+      fullPath: '/demo/api/tq-todos'
+      preLoaderRoute: typeof AuthedDemoApiTqTodosRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/demo/api/names': {
+      id: '/_authed/demo/api/names'
+      path: '/demo/api/names'
+      fullPath: '/demo/api/names'
+      preLoaderRoute: typeof AuthedDemoApiNamesRouteImport
+      parentRoute: typeof AuthedRouteRoute
+    }
+    '/_authed/demo/start/ssr/': {
+      id: '/_authed/demo/start/ssr/'
       path: '/demo/start/ssr'
       fullPath: '/demo/start/ssr/'
-      preLoaderRoute: typeof DemoStartSsrIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedDemoStartSsrIndexRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
-    '/demo/start/ssr/spa-mode': {
-      id: '/demo/start/ssr/spa-mode'
+    '/_authed/demo/start/ssr/spa-mode': {
+      id: '/_authed/demo/start/ssr/spa-mode'
       path: '/demo/start/ssr/spa-mode'
       fullPath: '/demo/start/ssr/spa-mode'
-      preLoaderRoute: typeof DemoStartSsrSpaModeRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedDemoStartSsrSpaModeRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
-    '/demo/start/ssr/full-ssr': {
-      id: '/demo/start/ssr/full-ssr'
+    '/_authed/demo/start/ssr/full-ssr': {
+      id: '/_authed/demo/start/ssr/full-ssr'
       path: '/demo/start/ssr/full-ssr'
       fullPath: '/demo/start/ssr/full-ssr'
-      preLoaderRoute: typeof DemoStartSsrFullSsrRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedDemoStartSsrFullSsrRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
-    '/demo/start/ssr/data-only': {
-      id: '/demo/start/ssr/data-only'
+    '/_authed/demo/start/ssr/data-only': {
+      id: '/_authed/demo/start/ssr/data-only'
       path: '/demo/start/ssr/data-only'
       fullPath: '/demo/start/ssr/data-only'
-      preLoaderRoute: typeof DemoStartSsrDataOnlyRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthedDemoStartSsrDataOnlyRouteImport
+      parentRoute: typeof AuthedRouteRoute
     }
   }
 }
 
+interface AuthedRouteRouteChildren {
+  AuthedIndexRoute: typeof AuthedIndexRoute
+  AuthedDemoTanstackQueryRoute: typeof AuthedDemoTanstackQueryRoute
+  AuthedDemoApiNamesRoute: typeof AuthedDemoApiNamesRoute
+  AuthedDemoApiTqTodosRoute: typeof AuthedDemoApiTqTodosRoute
+  AuthedDemoFormAddressRoute: typeof AuthedDemoFormAddressRoute
+  AuthedDemoStartApiRequestRoute: typeof AuthedDemoStartApiRequestRoute
+  AuthedDemoStartServerFuncsRoute: typeof AuthedDemoStartServerFuncsRoute
+  AuthedDemoStartSsrDataOnlyRoute: typeof AuthedDemoStartSsrDataOnlyRoute
+  AuthedDemoStartSsrFullSsrRoute: typeof AuthedDemoStartSsrFullSsrRoute
+  AuthedDemoStartSsrSpaModeRoute: typeof AuthedDemoStartSsrSpaModeRoute
+  AuthedDemoStartSsrIndexRoute: typeof AuthedDemoStartSsrIndexRoute
+}
+
+const AuthedRouteRouteChildren: AuthedRouteRouteChildren = {
+  AuthedIndexRoute: AuthedIndexRoute,
+  AuthedDemoTanstackQueryRoute: AuthedDemoTanstackQueryRoute,
+  AuthedDemoApiNamesRoute: AuthedDemoApiNamesRoute,
+  AuthedDemoApiTqTodosRoute: AuthedDemoApiTqTodosRoute,
+  AuthedDemoFormAddressRoute: AuthedDemoFormAddressRoute,
+  AuthedDemoStartApiRequestRoute: AuthedDemoStartApiRequestRoute,
+  AuthedDemoStartServerFuncsRoute: AuthedDemoStartServerFuncsRoute,
+  AuthedDemoStartSsrDataOnlyRoute: AuthedDemoStartSsrDataOnlyRoute,
+  AuthedDemoStartSsrFullSsrRoute: AuthedDemoStartSsrFullSsrRoute,
+  AuthedDemoStartSsrSpaModeRoute: AuthedDemoStartSsrSpaModeRoute,
+  AuthedDemoStartSsrIndexRoute: AuthedDemoStartSsrIndexRoute,
+}
+
+const AuthedRouteRouteWithChildren = AuthedRouteRoute._addFileChildren(
+  AuthedRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  DemoBetterAuthRoute: DemoBetterAuthRoute,
-  DemoTanstackQueryRoute: DemoTanstackQueryRoute,
+  AuthedRouteRoute: AuthedRouteRouteWithChildren,
+  LoginRoute: LoginRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
-  DemoApiNamesRoute: DemoApiNamesRoute,
-  DemoApiTqTodosRoute: DemoApiTqTodosRoute,
-  DemoFormAddressRoute: DemoFormAddressRoute,
-  DemoStartApiRequestRoute: DemoStartApiRequestRoute,
-  DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
-  DemoStartSsrDataOnlyRoute: DemoStartSsrDataOnlyRoute,
-  DemoStartSsrFullSsrRoute: DemoStartSsrFullSsrRoute,
-  DemoStartSsrSpaModeRoute: DemoStartSsrSpaModeRoute,
-  DemoStartSsrIndexRoute: DemoStartSsrIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
