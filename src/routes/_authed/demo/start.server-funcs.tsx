@@ -6,7 +6,7 @@ const getCurrentServerTime = createServerFn({
   method: 'GET',
 }).handler(async () => await new Date().toISOString())
 
-export const Route = createFileRoute('/demo/start/server-funcs')({
+export const Route = createFileRoute('/_authed/demo/start/server-funcs')({
   component: Home,
   loader: async () => await getCurrentServerTime(),
 })

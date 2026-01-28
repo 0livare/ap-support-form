@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
 
-export const Route = createFileRoute('/demo/better-auth')({
+export const Route = createFileRoute('/login')({
   component: BetterAuthDemo,
 })
 
@@ -73,7 +73,7 @@ function BetterAuthDemo() {
     )
   }
 
-  const handleGoogleSignIn = async () => {
+  async function handleGoogleSignIn() {
     setError('')
     setLoading(true)
 
@@ -84,9 +84,7 @@ function BetterAuthDemo() {
       })
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : 'Failed to sign in with Google. Please try again.',
+        err instanceof Error ? err.message : 'Failed to sign in with Google. Please try again.',
       )
       setLoading(false)
     }
@@ -149,19 +147,6 @@ function BetterAuthDemo() {
             Only @skyslope.com email addresses are allowed
           </p>
         </div>
-
-        <p className="mt-6 text-xs text-center text-neutral-400 dark:text-neutral-500">
-          Built with{' '}
-          <a
-            href="https://better-auth.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium hover:text-neutral-600 dark:hover:text-neutral-300"
-          >
-            BETTER-AUTH
-          </a>
-          .
-        </p>
       </div>
     </div>
   )
