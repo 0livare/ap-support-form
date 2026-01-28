@@ -8,4 +8,19 @@
     "GOOGLE_CLIENT_ID": "1088536622653-gc8uh0q1n1u2jldrvt3aabdop3hq4h1a.apps.googleusercontent.com",
     "VITE_BETTER_AUTH_URL": "https://ap-support-form.olivare.workers.dev",
   },
+  "observability": {
+    "enabled": false,
+    "head_sampling_rate": 1,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": false,
+      "persist": true,
+      "head_sampling_rate": 1
+    }
+  }
 }
