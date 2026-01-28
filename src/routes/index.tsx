@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
-import Header from '@/components/Header'
 import { Card, CardContent } from '@/components/ui/card'
 import { useAppForm } from '@/hooks/demo.form'
 
@@ -54,8 +53,6 @@ function SimpleForm() {
 
   return (
     <div className="h-full flex flex-col">
-      <Header />
-
       <div className="flex flex-col items-center justify-center  grow px-4">
         <Card className="w-full max-w-2xl">
           <CardContent>
