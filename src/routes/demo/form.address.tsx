@@ -184,7 +184,7 @@ function AddressForm() {
 
           <div className="flex justify-end">
             <form.AppForm>
-              <form.SubscribeButton label="Submit" />
+              <form.SubmitButton />
             </form.AppForm>
           </div>
         </form>

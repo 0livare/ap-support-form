@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import { getPunkSongs } from '@/data/demo.punk-songs'
 
 export const Route = createFileRoute('/demo/start/ssr/spa-mode')({
@@ -8,7 +8,7 @@ export const Route = createFileRoute('/demo/start/ssr/spa-mode')({
 })
 
 function RouteComponent() {
-  const [punkSongs, setPunkSongs] = useState<Awaited<ReturnType<typeof getPunkSongs>>>([])
+  const [punkSongs, setPunkSongs] = useState<Awaited<ReturnType<typeof getPunkSongs>>>([] as any)
 
   useEffect(() => {
     getPunkSongs().then(setPunkSongs)
@@ -16,7 +16,7 @@ function RouteComponent() {
 
   return (
     <div
-      className="flex items-center justify-center min-h-screen bg-gradient-to-br from-zinc-800 to-black p-4 text-white"
+      className="flex items-center justify-center min-h-screen bg-linear-to-br from-zinc-800 to-black p-4 text-white"
       style={{
         backgroundImage:
           'radial-gradient(50% 50% at 20% 60%, #1a1a1a 0%, #0a0a0a 50%, #000000 100%)',

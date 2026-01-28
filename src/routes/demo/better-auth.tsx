@@ -100,7 +100,7 @@ function BetterAuthDemo() {
           setError(result.error.message || 'Sign in failed')
         }
       }
-    } catch (err) {
+    } catch (_err) {
       setError('An unexpected error occurred')
     } finally {
       setLoading(false)

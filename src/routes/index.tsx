@@ -181,7 +181,7 @@ function SimpleForm() {
 
           <div className="flex justify-end">
             <form.AppForm>
-              <form.SubscribeButton label="Submit" />
+              <form.SubmitButton label="Submit" />
             </form.AppForm>
           </div>
         </form>
