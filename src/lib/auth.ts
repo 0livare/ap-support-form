@@ -3,7 +3,7 @@ import { tanstackStartCookies } from 'better-auth/tanstack-start'
 
 export const auth = betterAuth({
   // Base URL for OAuth redirects
-  baseURL: process.env.BETTER_AUTH_URL || 'http://localhost:3000',
+  baseURL: process.env.VITE_BETTER_AUTH_URL || window.location.origin,
 
   // Google OAuth configuration
   socialProviders: {
@@ -25,9 +25,7 @@ export const auth = betterAuth({
 
           // Reject non-skyslope.com emails
           if (domain !== 'skyslope.com') {
-            throw new Error(
-              'Only SkySlope email addresses (@skyslope.com) are allowed to sign in.',
-            )
+            throw new Error('Only SkySlope email addresses (@skyslope.com) are allowed to sign in.')
           }
 
           return { data: user }
