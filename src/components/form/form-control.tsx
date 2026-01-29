@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 
 export interface FormControlProps extends React.ComponentProps<'div'> {
   label: string
+  description?: React.ReactNode
   // biome-ignore format lint/suspicious/noExplicitAny: don't split all these any's onto their own line
   field: FieldApi<any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any, any>
   classes?: {
@@ -22,6 +23,7 @@ export function FormControl(props: FormControlProps) {
     className,
     field,
     label,
+    description,
     classes,
     isOptional: isOptionalOverride,
     ...rest
@@ -39,6 +41,7 @@ export function FormControl(props: FormControlProps) {
       >
         {children}
       </Label>
+      {description && <div className="text-sm text-muted-foreground my-1">{description}</div>}
       {field.state.meta.isTouched && <ErrorMessages errors={errors} />}
     </div>
   )

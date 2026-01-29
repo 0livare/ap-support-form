@@ -1,24 +1,23 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
+import { Spacer } from '@/components'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useAppForm } from '@/hooks/demo.form'
-import { Switch } from '../../components/form/switch'
+import { useAppForm } from '@/hooks/form/use-app-form'
+import { authClient } from '@/lib/auth-client'
 
-export const Route = createFileRoute('/_authed/')({
+export const Route = createFileRoute('/_authed/form')({
   component: SimpleForm,
 })
 
 const schema = z
   .object({
+    slackUsername: z.string().min(1, 'Required'),
     app: z.enum(
       ['forms', 'digisign', 'breeze', 'bmui', 'offers', 'prime', 'books', 'other'] as const,
       'Please choose an app',
     ),
-    affectedCount: z.enum(
-      ['one', 'multiple', 'brokerage', 'everyone'],
-      'Please specify how many users are affected',
-    ),
-    isBlocker: z.boolean(),
+    affectedCount: z.enum(['one', 'multiple', 'brokerage', 'everyone'], 'Required'),
+    isBlocker: z.stringbool('Required'),
     email: z.email(),
     subId: z.string().optional(),
     video: z.url(),
@@ -48,11 +47,14 @@ const schema = z
 type FormValues = z.infer<typeof schema>
 
 function SimpleForm() {
+  const { data: session } = authClient.useSession()
   const form = useAppForm({
     // @ts-expect-error
     defaultValues: {
+      slackUsername: '',
       app: '',
-      urgency: '',
+      affectedCount: 'one',
+      isBlocker: 'no',
       email: '',
       video: '',
       screenshots: [],
@@ -86,6 +88,25 @@ function SimpleForm() {
             }}
             className="space-y-6"
           >
+            <div className="flex gap-4 items-center">
+              {session?.user.image ? (
+                <img src={session.user.image} alt="" className="h-10 w-10 rounded-full" />
+              ) : null}
+              {session?.user.email}
+            </div>
+
+            <form.AppField name="slackUsername">
+              {(field) => (
+                <field.TextField
+                  label="What is your Slack username?"
+                  inputProps={{ autoComplete: 'off' }}
+                  placeholder="@Zach"
+                />
+              )}
+            </form.AppField>
+
+            <Spacer />
+
             <form.AppField name="app">
               {(field) => (
                 <field.Select
@@ -123,7 +144,9 @@ function SimpleForm() {
                   </p>
                 ) : app ? (
                   <>
-                    <form.AppField name="affectedCount">
+                    <Spacer />
+
+                    {/* <form.AppField name="affectedCount">
                       {(field) => (
                         <field.Select
                           label="How many users are affected by this issue?"
@@ -135,14 +158,41 @@ function SimpleForm() {
                           ]}
                         />
                       )}
+                    </form.AppField> */}
+                    <form.AppField name="affectedCount">
+                      {(field) => (
+                        <field.RadioToggleGroup
+                          label="How many users are affected by this issue?"
+                          classes={{
+                            labelRoot: 'flex-col items-start',
+                          }}
+                        >
+                          <field.ToggleGroupItem value="one">Just one user</field.ToggleGroupItem>
+                          <field.ToggleGroupItem value="multiple">
+                            Multiple user reports
+                          </field.ToggleGroupItem>
+                          <field.ToggleGroupItem value="brokerage">
+                            An entire brokerage
+                          </field.ToggleGroupItem>
+                          <field.ToggleGroupItem value="everyone">Everyone</field.ToggleGroupItem>
+                        </field.RadioToggleGroup>
+                      )}
                     </form.AppField>
                     <form.AppField name="isBlocker">
-                      {(field) => <field.Switch label="Is this a blocker for them?" />}
+                      {(field) => (
+                        <field.RadioToggleGroup label="Is this a blocker for them?">
+                          <field.ToggleGroupItem value="no">No</field.ToggleGroupItem>
+                          <field.ToggleGroupItem value="yes">Yes</field.ToggleGroupItem>
+                        </field.RadioToggleGroup>
+                      )}
                     </form.AppField>
 
                     <form.AppField name="email">
                       {(field) => (
-                        <field.TextField label="What is the email of the account reporting the issue?" />
+                        <field.TextField
+                          label="What is the email of the account reporting the issue?"
+                          inputProps={{ autoComplete: 'off' }}
+                        />
                       )}
                     </form.AppField>
 
@@ -157,9 +207,24 @@ function SimpleForm() {
                       </form.AppField>
                     )}
 
+                    <Spacer />
+
                     <form.AppField name="video">
                       {(field) => (
-                        <field.TextField label="Provide a link to a video recording of the issue." />
+                        <field.TextField
+                          label="Provide a link to a video screen recording of the issue."
+                          description={
+                            <>
+                              This could be a video from a customer or one you recorded yourself.
+                              Someone walking through the issue makes it much easier for us to
+                              understand the problem.{' '}
+                              <a href="https://jam.dev" className="underline">
+                                Jam.dev
+                              </a>{' '}
+                              is a great free tool. You can also use Slack.
+                            </>
+                          }
+                        />
                       )}
                     </form.AppField>
 
@@ -192,9 +257,14 @@ function SimpleForm() {
 
                     <form.AppField name="previousTicketNumbers">
                       {(field) => (
-                        <field.TextField label="Have you created any tickets regarding this issue? Or has this been reported in this channel previously? (provide links)" />
+                        <field.TextField
+                          label="Have you created any tickets regarding this issue? Or has this been reported in this channel previously? (provide links)"
+                          placeholder="https://skyslope.atlassian.net/browse/AP-789"
+                        />
                       )}
                     </form.AppField>
+
+                    <Spacer />
 
                     <form.AppField name="description">
                       {(field) => (

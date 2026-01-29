@@ -1,5 +1,5 @@
 import { Switch as ShadcnSwitch } from '@/components/ui/switch'
-import { useFieldContext } from '@/hooks/demo.form-context'
+import { useFieldContext } from '@/hooks/form/form-context'
 import { FormControl } from './form-control'
 
 export function Switch({ label }: { label: string }) {

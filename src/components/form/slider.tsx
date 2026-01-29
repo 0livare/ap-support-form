@@ -1,5 +1,5 @@
 import { Slider as ShadcnSlider } from '@/components/ui/slider'
-import { useFieldContext } from '@/hooks/demo.form-context'
+import { useFieldContext } from '@/hooks/form/form-context'
 import { FormControl } from './form-control'
 
 export function Slider({ label }: { label: string }) {

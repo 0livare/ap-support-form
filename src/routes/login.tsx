@@ -70,10 +70,8 @@ function RouteComponent() {
     setLoading(true)
 
     try {
-      await authClient.signIn.social({
-        provider: 'google',
-        callbackURL: '/',
-      })
+      const callbackURL: FileRouteTypes['to'] = '/form'
+      await authClient.signIn.social({ provider: 'google', callbackURL })
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Failed to sign in with Google. Please try again.',

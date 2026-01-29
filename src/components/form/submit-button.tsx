@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { useFormContext } from '@/hooks/demo.form-context'
+import { useFormContext } from '@/hooks/form/form-context'
 
 export function SubmitButton({ label = 'Submit' }: { label?: string }) {
   const form = useFormContext()
