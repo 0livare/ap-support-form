@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAppForm } from '@/hooks/demo.form'
+import { Switch } from '../../components/form/switch'
 
 export const Route = createFileRoute('/_authed/')({
   component: SimpleForm,
@@ -13,10 +14,11 @@ const schema = z
       ['forms', 'digisign', 'breeze', 'bmui', 'offers', 'prime', 'books', 'other'] as const,
       'Please choose an app',
     ),
-    urgency: z.enum(
-      ['info', 'low', 'medium', 'high'],
-      'Please specify the urgency of this request',
+    affectedCount: z.enum(
+      ['one', 'multiple', 'brokerage', 'everyone'],
+      'Please specify how many users are affected',
     ),
+    isBlocker: z.boolean(),
     email: z.email(),
     subId: z.string().optional(),
     video: z.url(),
@@ -121,27 +123,21 @@ function SimpleForm() {
                   </p>
                 ) : app ? (
                   <>
-                    <form.AppField name="urgency">
+                    <form.AppField name="affectedCount">
                       {(field) => (
                         <field.Select
-                          label="How urgent is this request?"
+                          label="How many users are affected by this issue?"
                           values={[
-                            {
-                              value: 'info',
-                              label: 'Just letting you know - no further action needed',
-                            },
-                            {
-                              value: 'low',
-                              label: 'Needs action eventually - should write a ticket',
-                            },
-                            { value: 'medium', label: 'One user is blocked' },
-                            {
-                              value: 'high',
-                              label: 'Many users are blocked - NEEDS IMMEDIATE ACTION',
-                            },
+                            { value: 'one', label: 'Just one user' },
+                            { value: 'multiple', label: 'Multiple user reports' },
+                            { value: 'brokerage', label: 'An entire brokerage' },
+                            { value: 'everyone', label: 'Everyone' },
                           ]}
                         />
                       )}
+                    </form.AppField>
+                    <form.AppField name="isBlocker">
+                      {(field) => <field.Switch label="Is this a blocker for them?" />}
                     </form.AppField>
 
                     <form.AppField name="email">

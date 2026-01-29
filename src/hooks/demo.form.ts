@@ -1,6 +1,6 @@
 import { createFormHook } from '@tanstack/react-form'
 
-import { FileUpload, Select, SubmitButton, TextArea, TextField } from '@/components/form'
+import { FileUpload, Select, SubmitButton, Switch, TextArea, TextField } from '@/components/form'
 import { fieldContext, formContext } from './demo.form-context'
 
 export const { useAppForm } = createFormHook({
@@ -9,6 +9,7 @@ export const { useAppForm } = createFormHook({
     Select,
     TextArea,
     FileUpload,
+    Switch,
   },
   formComponents: {
     SubmitButton,
