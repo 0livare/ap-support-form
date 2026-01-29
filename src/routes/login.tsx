@@ -1,7 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
+import type { FileRouteTypes } from '@/routeTree.gen'
 
 export const Route = createFileRoute('/login')({
   component: RouteComponent,
@@ -49,7 +50,16 @@ function RouteComponent() {
             </div>
           </div>
 
-          <AuthButton onClick={() => authClient.signOut()}>Sign out</AuthButton>
+          <div className="mt-16 flex flex-col gap-4">
+            <AuthButton to="/">Go to AP support form</AuthButton>
+            <button
+              type="button"
+              onClick={() => authClient.signOut()}
+              className="text-sm hover:underline"
+            >
+              Sign out
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -141,20 +151,22 @@ function GoogleLogo() {
   )
 }
 
-function AuthButton(props: React.ComponentProps<'button'>) {
-  const { className, ...rest } = props
-  return (
-    <button
-      {...rest}
-      type="button"
-      className={cn(
-        'w-full h-10 px-4 text-sm font-medium',
-        'border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50/10 dark:hover:bg-neutral-50',
-        'transition-colors',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
-        'flex items-center justify-center gap-2',
-        className,
-      )}
-    />
+function AuthButton(props: React.ComponentProps<'button'> & { to?: FileRouteTypes['to'] }) {
+  const { className, to, ...rest } = props
+
+  const finalClassName = cn(
+    'w-full h-10 px-4 text-sm font-medium',
+    'border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50/10 dark:hover:bg-neutral-50',
+    'transition-colors',
+    'disabled:opacity-50 disabled:cursor-not-allowed',
+    'flex items-center justify-center gap-2',
+    className,
   )
+
+  if (to) {
+    // biome-ignore lint/suspicious/noExplicitAny: They have mostly the same props
+    return <Link to={to} className={finalClassName} {...(rest as any)} />
+  }
+
+  return <button {...rest} type="button" className={finalClassName} />
 }
