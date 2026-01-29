@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: env vars */
 import { betterAuth } from 'better-auth'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 
@@ -14,6 +15,13 @@ function createAuthInstance() {
     advanced: {
       trustedProxyHeaders: true,
     },
+
+    // Allow requests from localhost origins for development
+    trustedOrigins: [
+      'http://localhost:3000',
+      'http://localhost:8787',
+      'https://ap-support-form.olivare.workers.dev',
+    ],
 
     // Google OAuth configuration
     socialProviders: {
@@ -35,7 +43,9 @@ function createAuthInstance() {
 
             // Reject non-skyslope.com emails
             if (domain !== 'skyslope.com') {
-              throw new Error('Only SkySlope email addresses (@skyslope.com) are allowed to sign in.')
+              throw new Error(
+                'Only SkySlope email addresses (@skyslope.com) are allowed to sign in.',
+              )
             }
 
             return { data: user }
@@ -60,10 +70,10 @@ export const auth = {
     return getAuthInstance().handler
   },
   get instance() {
+    return getAuthInstance()
+  },
+  createInstance() {
+    authInstance = createAuthInstance()
     return authInstance
   },
-  set instance(value) {
-    authInstance = value
-  },
-  createInstance: createAuthInstance,
 }

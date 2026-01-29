@@ -70,7 +70,7 @@ function SimpleForm() {
   })
 
   return (
-    <div className="h-full flex flex-col justify-center items-center p-12">
+    <div className="min-h-full flex flex-col justify-center items-center p-12">
       <Card className="w-full max-w-2xl">
         <CardContent>
           <form
