@@ -18,7 +18,19 @@ const schema = z
     ),
     affectedCount: z.enum(['one', 'multiple', 'brokerage', 'everyone'], 'Required'),
     isBlocker: z.stringbool('Required'),
-    email: z.email(),
+    email: z
+      .string()
+      .min(1, 'At least one email is required')
+      .refine(
+        (value) => {
+          const emails = value
+            .split(/[,\s]+/)
+            .map((e) => e.trim())
+            .filter(Boolean)
+          return emails.every((email) => z.string().email().safeParse(email).success)
+        },
+        { message: 'Invalid email' },
+      ),
     subId: z.string().optional(),
     video: z.url(),
     screenshots: z.array(z.instanceof(File)).max(10, 'Maximum 10 files allowed').optional(),
@@ -190,7 +202,9 @@ function SimpleForm() {
                     <form.AppField name="email">
                       {(field) => (
                         <field.TextField
-                          label="What is the email of the account reporting the issue?"
+                          label="What is the email of the account(s) reporting the issue?"
+                          description="You can enter multiple emails separated by commas or spaces"
+                          placeholder="user@example.com, other@example.com"
                           inputProps={{ autoComplete: 'off' }}
                         />
                       )}
