@@ -7,8 +7,13 @@ let authInstance: ReturnType<typeof betterAuth> | null = null
 
 function createAuthInstance() {
   return betterAuth({
-    // Base URL for OAuth redirects - must be set in environment variables
-    baseURL: process.env.VITE_BETTER_AUTH_URL!,
+    // Omit baseURL to allow dynamic detection from request headers
+    // This works for both :3000 (vite dev) and :8787 (wrangler dev)
+
+    // Enable automatic baseURL detection from x-forwarded-host and x-forwarded-proto headers
+    advanced: {
+      trustedProxyHeaders: true,
+    },
 
     // Google OAuth configuration
     socialProviders: {

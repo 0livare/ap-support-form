@@ -4,10 +4,10 @@ import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 
 export const Route = createFileRoute('/login')({
-  component: BetterAuthDemo,
+  component: RouteComponent,
 })
 
-function BetterAuthDemo() {
+function RouteComponent() {
   const { data: session, isPending } = authClient.useSession()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
@@ -49,26 +49,7 @@ function BetterAuthDemo() {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => authClient.signOut()}
-            className="w-full h-9 px-4 text-sm font-medium border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-          >
-            Sign out
-          </button>
-
-          <p className="text-xs text-center text-neutral-400 dark:text-neutral-500">
-            Built with{' '}
-            <a
-              href="https://better-auth.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium hover:text-neutral-600 dark:hover:text-neutral-300"
-            >
-              BETTER-AUTH
-            </a>
-            .
-          </p>
+          <AuthButton onClick={() => authClient.signOut()}>Sign out</AuthButton>
         </div>
       </div>
     )
@@ -108,8 +89,7 @@ function BetterAuthDemo() {
             </div>
           )}
 
-          <button
-            type="button"
+          <AuthButton
             onClick={handleGoogleSignIn}
             disabled={loading}
             className={cn(
@@ -131,7 +111,7 @@ function BetterAuthDemo() {
                 Sign in with Google
               </>
             )}
-          </button>
+          </AuthButton>
         </div>
       </div>
     </div>
@@ -158,5 +138,23 @@ function GoogleLogo() {
         d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
       />
     </svg>
+  )
+}
+
+function AuthButton(props: React.ComponentProps<'button'>) {
+  const { className, ...rest } = props
+  return (
+    <button
+      {...rest}
+      type="button"
+      className={cn(
+        'w-full h-10 px-4 text-sm font-medium',
+        'border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-50/10 dark:hover:bg-neutral-50',
+        'transition-colors',
+        'disabled:opacity-50 disabled:cursor-not-allowed',
+        'flex items-center justify-center gap-2',
+        className,
+      )}
+    />
   )
 }
