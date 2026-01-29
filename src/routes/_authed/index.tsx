@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAppForm } from '@/hooks/demo.form'
 
 export const Route = createFileRoute('/_authed/')({
@@ -72,6 +72,9 @@ function SimpleForm() {
   return (
     <div className="min-h-full flex flex-col justify-center items-center p-12">
       <Card className="w-full max-w-2xl">
+        <CardHeader>
+          <CardTitle>Agent Platform Support Form</CardTitle>
+        </CardHeader>
         <CardContent>
           <form
             onSubmit={(e) => {
