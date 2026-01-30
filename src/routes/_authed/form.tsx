@@ -1,96 +1,50 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useServerFn } from '@tanstack/react-start'
 import React from 'react'
-import { z } from 'zod'
 import { Spacer } from '@/components'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAppForm } from '@/hooks/form/use-app-form'
+import { apSupportFormSchema } from '@/lib/ap-support-form-schema'
 import { authClient } from '@/lib/auth-client'
-import { sendSlackMessage } from '@/lib/slack'
+import { sendSlackMessageServer } from '@/lib/slack'
 
 export const Route = createFileRoute('/_authed/form')({
   component: SimpleForm,
 })
 
-const schema = z
-  .object({
-    slackUsername: z.string().min(1, 'Required'),
-    app: z.enum(
-      ['forms', 'digisign', 'breeze', 'bmui', 'offers', 'prime', 'books', 'other'] as const,
-      'Please choose an app',
-    ),
-    affectedCount: z.enum(['one', 'multiple', 'brokerage', 'everyone'], 'Required'),
-    isBlocker: z.stringbool('Required'),
-    email: z
-      .string()
-      .min(1, 'At least one email is required')
-      .refine(
-        (value) => {
-          const emails = value
-            .split(/[,\s]+/)
-            .map((e) => e.trim())
-            .filter(Boolean)
-          return emails.every((email) => z.string().email().safeParse(email).success)
-        },
-        { message: 'Invalid email' },
-      ),
-    subId: z.string().optional(),
-    video: z.url(),
-    screenshots: z.array(z.instanceof(File)).max(10, 'Maximum 10 files allowed').optional(),
-    formsFile: z.url().optional(),
-    digiEnvelope: z
-      .url()
-      .regex(
-        /^https:\/\/send\.skyslope\.com\/envelopes\/[a-f0-9-]+/,
-        'Invalid Digisign envelope URL',
-      )
-      .optional(),
-    previousTicketNumbers: z.string().optional(),
-    description: z.string().min(1, 'Description is required'),
-  })
-  .refine(
-    (data) => {
-      if (data.app === 'bmui') return !!data.subId
-      return true
-    },
-    {
-      error: 'Subscriber ID is required for BMUI issues',
-      path: ['subId'],
-    },
-  )
-
-type FormValues = z.infer<typeof schema>
-
 function SimpleForm() {
   const { data: session } = authClient.useSession()
   const navigate = useNavigate()
+  const sendSlackMessage = useServerFn(sendSlackMessageServer)
 
   const [submitting, setSubmitting] = React.useState(false)
   const [submitError, setSubmitError] = React.useState<string | null>(null)
 
   const form = useAppForm({
-    // @ts-expect-error
     defaultValues: {
       slackUsername: '',
       app: '',
       affectedCount: 'one',
       isBlocker: 'no',
       email: '',
+      subId: '',
       video: '',
-      screenshots: [],
+      screenshots: [] as File[],
       formsFile: '',
       digiEnvelope: '',
       previousTicketNumbers: '',
       description: '',
-    } as Partial<FormValues>,
+    },
     validators: {
-      onBlur: schema,
+      // biome-ignore lint/suspicious/noExplicitAny: There is a conflict between the default values, which include empty string, and the desired shape of the form once submitted, which is the shape of the schema, which does not allow empty strings. Casting to any to bypass this conflict.
+      onBlur: apSupportFormSchema as any,
     },
     async onSubmit({ value }) {
       setSubmitting(true)
       setSubmitError(null)
 
       try {
-        const result = await sendSlackMessage(value)
+        const result = await sendSlackMessage({ data: value })
 
         if (result.success && result.permalink) {
           // Redirect to success page with permalink

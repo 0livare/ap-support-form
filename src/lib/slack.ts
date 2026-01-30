@@ -1,17 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-
-export interface SlackFormSubmission {
-  app: string
-  urgency: string
-  email: string
-  subId?: string
-  video: string
-  screenshots?: File[]
-  formsFile?: string
-  digiEnvelope?: string
-  previousTicketNumbers?: string
-  description: string
-}
+import { type ApSupportFormShape, apSupportFormSchema } from '@/lib/ap-support-form-schema'
 
 interface SlackFile {
   id: string
@@ -32,7 +20,7 @@ interface SlackFileUploadResponse {
 }
 
 // Helper to format app names for display
-const formatAppName = (app: string): string => {
+function formatAppName(app: ApSupportFormShape['app']): string {
   const appNames: Record<string, string> = {
     forms: 'Forms',
     digisign: 'Digisign',
@@ -47,14 +35,14 @@ const formatAppName = (app: string): string => {
 }
 
 // Helper to get urgency emoji and color
-const getUrgencyDetails = (urgency: string) => {
-  const details: Record<string, { emoji: string; color: string }> = {
-    info: { emoji: '💡', color: '#36a64f' }, // green
-    low: { emoji: '🔵', color: '#2196F3' }, // blue
-    medium: { emoji: '🟡', color: '#FFA500' }, // orange
-    high: { emoji: '🔴', color: '#FF0000' }, // red
+function getUrgencyDetails(affectedCount: ApSupportFormShape['affectedCount']) {
+  const details: Record<ApSupportFormShape['affectedCount'], { emoji: string; color: string }> = {
+    one: { emoji: '💡', color: '#36a64f' }, // green
+    multiple: { emoji: '🔵', color: '#2196F3' }, // blue
+    brokerage: { emoji: '🟡', color: '#FFA500' }, // orange
+    everyone: { emoji: '🔴', color: '#FF0000' }, // red
   }
-  return details[urgency] || { emoji: '⚪', color: '#808080' }
+  return details[affectedCount] || { emoji: '⚪', color: '#808080' }
 }
 
 // Upload files to Slack and return file IDs
@@ -101,8 +89,8 @@ async function uploadFilesToSlack(
 }
 
 // Build Slack Block Kit message
-function buildSlackMessage(data: SlackFormSubmission, fileIds?: string[]) {
-  const { emoji, color } = getUrgencyDetails(data.urgency)
+function buildSlackMessage(data: ApSupportFormShape, fileIds?: string[]) {
+  const { emoji } = getUrgencyDetails(data.affectedCount)
   const appName = formatAppName(data.app)
 
   // Build context elements
@@ -117,7 +105,7 @@ function buildSlackMessage(data: SlackFormSubmission, fileIds?: string[]) {
     contextElements.push(`*Previous Tickets:* ${data.previousTicketNumbers}`)
   }
 
-  const blocks = [
+  const blocks: Array<Record<string, unknown>> = [
     {
       type: 'header',
       text: {
@@ -131,7 +119,11 @@ function buildSlackMessage(data: SlackFormSubmission, fileIds?: string[]) {
       fields: [
         {
           type: 'mrkdwn',
-          text: `*Urgency:*\n${data.urgency.charAt(0).toUpperCase() + data.urgency.slice(1)}`,
+          text: `*Affected Count:*\n${capitalize(data.affectedCount)}`,
+        },
+        {
+          type: 'mrkdwn',
+          text: `*Blocker?:*\n${data.isBlocker ? 'Yes' : 'No'}`,
         },
         {
           type: 'mrkdwn',
@@ -200,7 +192,7 @@ function buildSlackMessage(data: SlackFormSubmission, fileIds?: string[]) {
     blocks: typeof blocks
     files?: string[]
   } = {
-    text: `New ${data.urgency} priority support request for ${appName} from ${data.email}`,
+    text: `New support request for ${appName} from ${data.email}`,
     blocks,
   }
 
@@ -220,68 +212,75 @@ function generatePermalink(channelId: string, ts: string, workspaceId: string): 
 }
 
 // Main server function to send Slack message
-export const sendSlackMessage = createServerFn({
+export const sendSlackMessageServer = createServerFn({
   method: 'POST',
-}).handler(async (data: SlackFormSubmission) => {
-  const botToken = process.env.SLACK_BOT_TOKEN
-  const channelId = process.env.SLACK_CHANNEL_ID
-  const workspaceId = process.env.SLACK_WORKSPACE_ID || 'skyslope' // Default to skyslope
-
-  if (!botToken) {
-    console.error('SLACK_BOT_TOKEN not configured')
-    throw new Error('Slack integration not configured. Please set SLACK_BOT_TOKEN.')
-  }
-
-  if (!channelId) {
-    console.error('SLACK_CHANNEL_ID not configured')
-    throw new Error('Slack integration not configured. Please set SLACK_CHANNEL_ID.')
-  }
-
-  try {
-    // Step 1: Upload files if present
-    let fileIds: string[] = []
-    if (data.screenshots && data.screenshots.length > 0) {
-      try {
-        fileIds = await uploadFilesToSlack(data.screenshots, channelId, botToken)
-      } catch (fileError) {
-        // Log but continue - we can still post the message without files
-        console.error('Failed to upload files, continuing without them:', fileError)
-      }
-    }
-
-    // Step 2: Build and post message
-    const message = buildSlackMessage(data, fileIds)
-
-    const response = await fetch('https://slack.com/api/chat.postMessage', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${botToken}`,
-      },
-      body: JSON.stringify({
-        channel: channelId,
-        ...message,
-      }),
-    })
-
-    const result = (await response.json()) as SlackMessageResponse
-
-    if (!result.ok) {
-      console.error('Slack API error:', result.error)
-      throw new Error(`Failed to send Slack message: ${result.error}`)
-    }
-
-    // Step 3: Generate permalink
-    const permalink = generatePermalink(channelId, result.ts, workspaceId)
-
-    return {
-      success: true,
-      permalink,
-      channel: result.channel,
-      timestamp: result.ts,
-    }
-  } catch (error) {
-    console.error('Error sending Slack message:', error)
-    throw error
-  }
 })
+  .inputValidator((data: unknown) => apSupportFormSchema.parse(data))
+  .handler(async (ctx) => {
+    const data = ctx.data
+    const botToken = process.env.SLACK_BOT_TOKEN
+    const channelId = process.env.SLACK_CHANNEL_ID
+    const workspaceId = process.env.SLACK_WORKSPACE_ID || 'skyslope' // Default to skyslope
+
+    if (!botToken) {
+      console.error('SLACK_BOT_TOKEN not configured')
+      throw new Error('Slack integration not configured. Please set SLACK_BOT_TOKEN.')
+    }
+
+    if (!channelId) {
+      console.error('SLACK_CHANNEL_ID not configured')
+      throw new Error('Slack integration not configured. Please set SLACK_CHANNEL_ID.')
+    }
+
+    try {
+      // Step 1: Upload files if present
+      let fileIds: string[] = []
+      if (data.screenshots && data.screenshots.length > 0) {
+        try {
+          fileIds = await uploadFilesToSlack(data.screenshots, channelId, botToken)
+        } catch (fileError) {
+          // Log but continue - we can still post the message without files
+          console.error('Failed to upload files, continuing without them:', fileError)
+        }
+      }
+
+      // Step 2: Build and post message
+      const message = buildSlackMessage(data, fileIds)
+
+      const response = await fetch('https://slack.com/api/chat.postMessage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${botToken}`,
+        },
+        body: JSON.stringify({
+          channel: channelId,
+          ...message,
+        }),
+      })
+
+      const result = (await response.json()) as SlackMessageResponse
+
+      if (!result.ok) {
+        console.error('Slack API error:', result.error)
+        throw new Error(`Failed to send Slack message: ${result.error}`)
+      }
+
+      // Step 3: Generate permalink
+      const permalink = generatePermalink(channelId, result.ts, workspaceId)
+
+      return {
+        success: true,
+        permalink,
+        channel: result.channel,
+        timestamp: result.ts,
+      }
+    } catch (error) {
+      console.error('Error sending Slack message:', error)
+      throw error
+    }
+  })
+
+function capitalize(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1)
+}
